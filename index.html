@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Inmobiliaria Chile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans flex flex-col min-h-screen">
+
+    <header class="bg-white shadow-md relative">
+        <button onclick="iniciarSesion()" id="btn-login" class="absolute top-2 right-2 sm:top-4 sm:right-4 text-xs sm:text-sm text-gray-500 hover:text-blue-600 bg-gray-100 px-2 py-1 rounded"> Dueño</button>
+        <button onclick="cerrarSesion()" id="btn-logout" class="absolute top-2 right-2 sm:top-4 sm:right-4 text-xs sm:text-sm text-red-500 hover:text-red-700 bg-red-50 px-2 py-1 rounded oculto">Cerrar Sesión</button>
+
+        <div class="max-w-6xl mx-auto px-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center pt-10 pb-2 text-blue-700">Mi Inmobiliaria Chile</h1>
+            
+            <div class="text-center mb-4">
+                <span class="bg-blue-50 text-blue-700 text-xs sm:text-sm px-3 py-1 rounded-full border border-blue-200 shadow-sm inline-block">
+                    Valor UF Hoy: <span id="valor-uf" class="font-bold">Cargando...</span>
+                </span>
+            </div>
+
+            <div class="flex overflow-x-auto no-scrollbar space-x-4 sm:space-x-8 border-b px-2 justify-start md:justify-center">
+                <button onclick="changeTab('propiedades')" id="tab-propiedades" class="tab-btn active pb-2 whitespace-nowrap text-sm sm:text-base text-gray-600 hover:text-blue-600 transition"> Propiedades</button>
+                <button onclick="changeTab('calculadora')" id="tab-calculadora" class="tab-btn pb-2 whitespace-nowrap text-sm sm:text-base text-gray-600 hover:text-blue-600 transition"> Calculadora</button>
+                <button onclick="changeTab('admin')" id="tab-admin" class="tab-btn pb-2 whitespace-nowrap text-sm sm:text-base text-red-600 hover:text-red-800 transition oculto"> Panel de Control</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="bg-white/80 max-w-6xl mx-auto px-2 sm:px-4 py-6 sm:py-8 flex-grow w-full rounded-lg mt-4 shadow-sm">
+        
+        <section id="propiedades" class="tab-content active">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 px-2">Propiedades Destacadas</h2>
+            <div id="contenedor-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            </div>
+        </section>
+
+        <section id="detalle" class="tab-content">
+            <button onclick="changeTab('propiedades')" class="mb-6 inline-flex items-center text-sm font-semibold text-gray-600 hover:text-blue-600 bg-gray-100 hover:bg-blue-50 px-4 py-2 rounded-full transition-colors shadow-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al catálogo
+            </button>
+            
+            <div id="contenedor-detalle" class="bg-white p-4 sm:p-8 rounded-lg shadow-lg border border-gray-100">
+            </div>
+        </section>
+
+        <section id="calculadora" class="tab-content">
+            <div class="max-w-2xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-lg">
+                <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center">Calculadora de Rentabilidad</h2>
+                <div class="space-y-4">
+                    <input type="number" id="precioCompra" class="w-full px-4 py-2 border rounded-md text-sm sm:text-base" placeholder="Precio Compra (Ej: 50000000)">
+                    <input type="number" id="costoArreglos" class="w-full px-4 py-2 border rounded-md text-sm sm:text-base" placeholder="Costo Arreglos (Ej: 10000000)">
+                    <input type="number" id="precioVenta" class="w-full px-4 py-2 border rounded-md text-sm sm:text-base" placeholder="Precio Venta (Ej: 80000000)">
+                    <button onclick="calcularRentabilidad()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-md mt-4 transition text-sm sm:text-base">Calcular Ganancia</button>
+                </div>
+                <div id="resultadoCalculadora" class="mt-6 sm:mt-8 p-4 rounded-md hidden text-sm sm:text-base">
+                    <p>Inversión Total: <span id="inversionTotal" class="font-bold"></span></p>
+                    <p>Ganancia Neta: <span id="gananciaNeta" class="font-bold text-lg sm:text-xl"></span></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin" class="tab-content">
+            <div class="max-w-2xl mx-auto bg-white p-4 sm:p-8 rounded-lg shadow-lg border-t-4 border-red-500">
+                
+                <form id="form-nueva-propiedad" onsubmit="procesarFormulario(event)" class="space-y-4">
+                    <input type="hidden" id="editPropiedadId" value="">
+
+                    <h2 id="titulo-form-admin" class="text-xl sm:text-2xl font-bold mb-2">Crear Nuevo Anuncio</h2>
+                    <p id="subtitulo-form-admin" class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+                        Sube fotos manteniendo presionada la tecla Ctrl (PC) o seleccionando varias en tu celular.
+                    </p>
+                    
+                    <div>
+                        <label class="block font-bold mb-1 text-sm sm:text-base">Título del Anuncio</label>
+                        <input type="text" id="nuevoTitulo" required class="w-full px-3 py-2 border rounded-md text-sm sm:text-base" placeholder="Ej: Casa con piscina en La Reina">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-sm sm:text-base">Descripción Corta (Resumen)</label>
+                        <input type="text" id="nuevaDesc" required class="w-full px-3 py-2 border rounded-md text-sm sm:text-base" placeholder="Ej: 3 Dorm • 2 Baños • Gran patio">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-sm sm:text-base">Descripción Detallada</label>
+                        <textarea id="nuevaDescLarga" required class="w-full px-3 py-2 border rounded-md text-sm sm:text-base" rows="4" placeholder="Explica todo sobre la propiedad..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-sm sm:text-base">Precio en Pesos (CLP)</label>
+                        <input type="number" id="nuevoPrecio" required class="w-full px-3 py-2 border rounded-md text-sm sm:text-base" placeholder="Ej: 150000000">
+                    </div>
+                    <div>
+                        <label id="label-fotos" class="block font-bold mb-1 text-sm sm:text-base">Fotos de la Propiedad (Múltiples)</label>
+                        <input type="file" id="nuevaImgArchivo" accept="image/*" multiple required class="w-full px-3 py-2 border rounded-md bg-gray-50 text-sm sm:text-base">
+                        <p id="help-fotos-edicion" class="text-xs text-gray-500 mt-1 hidden">Dejar vacío si deseas conservar las imágenes actuales.</p>
+                    </div>
+
+                    <button type="submit" id="btn-submit-form" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-md mt-4 transition text-sm sm:text-base">
+                        Publicar Propiedad
+                    </button>
+
+                    <button type="button" id="btn-cancelar-edicion" onclick="cancelarEdicion()" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 rounded-md mt-2 transition text-sm sm:text-base hidden">
+                        Cancelar Edición
+                    </button>
+
+                    <hr class="my-4">
+
+                    <button type="button" onclick="limpiarBaseDeDatos()" class="w-full bg-red-100 hover:bg-red-200 text-red-700 py-2 rounded-md text-xs sm:text-sm">
+                        Borrar todas mis propiedades (Reset)
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
